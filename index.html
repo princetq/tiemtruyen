@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tra cứu thuốc - BVĐK Tuyên Quang</title>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://script.google.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --glass-bg: rgba(255,255,255,0.45);
+            --glass-card: rgba(255,255,255,0.65);
+            --glass-border: rgba(255,255,255,0.6);
+            --glass-shadow: 0 4px 15px 0 rgba(0,0,0,0.1);
+            --primary-text: #334155;
+            --accent-color: #16a34a;
+            --accent-dark: #15803d;
+            --accent-bg: rgba(240,253,244,0.95);
+            --accent-gradient: linear-gradient(135deg,#4ade80 0%,#16a34a 100%);
+            --danger-color: #dc2626;
+            --separator-line: rgba(22,163,74,0.2);
+            --gray-text: #64748b;
+            --teal-navy-text: #1a535c;
+            --amber-bg: rgba(254,243,199,0.8);
+            --amber-color: #d97706;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+        @media (hover: hover) {
+            html { scrollbar-width: none; -ms-overflow-style: none; }
+            ::-webkit-scrollbar { display: none; width: 0; }
+        }
+        #csb { position:fixed; top:0; right:3px; width:3px; height:100vh; z-index:99999; pointer-events:none; opacity:0; transition:opacity 0.25s ease; }
+        #csb.show { opacity:1; }
+        #csb-thumb { position:absolute; right:0; width:3px; background:rgba(255,255,255,0.45); border-radius:4px; transition:background 0.2s; min-height:28px; }
+        #csb-thumb:hover { background:rgba(255,255,255,0.75); }
+        html { height: 100%; width: 100%; margin: 0; padding: 0; background: #0b3d1a; }
+        body { min-height: 100%; width: 100%; background: #0b3d1a; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; color: var(--primary-text); overflow-x: hidden; padding: 5px; margin: 0; }
+        .ambient-light { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(5,40,15,0.68) 0%, rgba(3,30,12,0.68) 100%); z-index: -1; pointer-events: none; }
+        .container { width: 100%; max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; padding-bottom: 10px; flex: 1; transition: margin-top 0.55s cubic-bezier(0.4,0,0.2,1); background: rgba(20, 120, 50, 0.18); backdrop-filter: blur(2px); border-radius: 18px; padding: 10px; }
+        header { background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 20px 15px; margin-bottom: 20px; box-shadow: var(--glass-shadow); text-align: center; }
+        .header-content h1 { font-size: 18px; font-weight: 800; color: var(--accent-dark); text-transform: uppercase; margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .header-subtitle { font-size: 13px; color: var(--teal-navy-text); font-weight: 700; margin-top: 4px; }
+        .pc-warning-badge { display: none; }
+        .search-container { background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); border-radius: 25px; padding: 15px; box-shadow: var(--glass-shadow); border: 1px solid var(--glass-border); margin-bottom: 15px; position: relative; z-index: 50; }
+        .search-box-wrapper { position: relative; width: 100%; }
+        #searchInput { width: 100%; padding: 12px 45px 12px 20px; border-radius: 30px; background: rgba(255,255,255,0.85); border: 1px solid rgba(255,255,255,0.9); font-size: 16px; color: var(--accent-dark); font-weight: 600; outline: none; transition: all 0.2s; }
+        #searchInput:focus { border-color: var(--accent-color); background: white; box-shadow: 0 0 0 3px rgba(22,163,74,0.2); }
+        #searchInput:disabled { background: rgba(255,255,255,0.5); }
+        .search-icon { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--accent-color); font-size: 18px; padding: 10px; cursor: pointer; }
+        .suggestions { position: relative; margin-top: 10px; background: rgba(255,255,255,0.98); backdrop-filter: blur(15px); border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); z-index: 100; overflow: hidden; display: none; border: 1px solid var(--glass-border); width: 100%; }
+        .suggestions div { padding: 13px 20px; font-size: 16px; cursor: pointer; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .suggestions div:hover { background: var(--accent-bg); color: var(--accent-dark); }
+        .sug-ing { font-weight: 500; color: #334155; }
+        .sug-brand { font-weight: 700; color: var(--accent-dark); }
+        .search-options { display: flex; justify-content: center; gap: 5px; margin-top: 10px; flex-wrap: nowrap; }
+        .search-option { padding: 6px 10px; border-radius: 20px; background: rgba(255,255,255,0.8); border: 1px solid var(--glass-border); color: var(--gray-text); font-weight: 700; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s; white-space: nowrap; }
+        .search-option.active { background: var(--accent-gradient); color: white; border-color: transparent; }
+        .search-option[data-type="nguy-co-cao"].active { background: linear-gradient(135deg,#f87171 0%,#ef4444 100%); }
+        .pc-text { display: none; }
+        .list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 0 5px; gap: 8px; flex-wrap: wrap; }
+        .list-title { font-size: 14px; font-weight: 800; color: var(--accent-dark); background: rgba(255,255,255,0.9); padding: 5px 15px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .list-count { font-size: 12px; font-weight: 700; color: var(--accent-dark); background: rgba(255,255,255,0.9); padding: 3px 10px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .list-grid { display: block; }
+        .list-item { background: rgba(255,255,255,0.85); backdrop-filter: blur(5px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 15px 20px; margin-bottom: 12px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+        .list-item:hover { background: #fff; transform: translateY(-2px); border-color: var(--accent-color); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+        .item-main { font-size: 15px; font-weight: 700; color: var(--accent-dark); display: block; margin-bottom: 2px; }
+        .item-sub { font-size: 12px; color: #64748b; font-weight: 500; }
+        .item-arrow { color: #cbd5e1; font-size: 14px; flex-shrink: 0; }
+        .glass-panel { background: rgba(255,255,255,0.85); padding: 30px; text-align: center; border-radius: 20px; border: 1px solid var(--glass-border); margin-bottom: 10px; box-shadow: var(--glass-shadow); }
+        .glass-panel i { font-size: 40px; margin-bottom: 10px; display: block; }
+        .loader { text-align: center; padding: 20px; color: #fff !important; font-weight: 600; text-shadow: 0 2px 4px rgba(0,0,0,0.4); }
+        .loader i { color: #fff !important; }
+        #drugDetail { display: none; animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .back-btn { background: white; border: 1px solid var(--glass-border); padding: 8px 16px; border-radius: 12px; font-size: 13px; font-weight: 700; color: #64748b; margin-bottom: 15px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .detail-card-main { background: rgba(255,255,255,0.85); backdrop-filter: blur(10px); border-radius: 20px; padding: 25px 20px; text-align: center; margin-bottom: 20px; border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); }
+        .detail-title { font-size: 20px; font-weight: 800; color: var(--accent-dark); line-height: 1.3; margin-bottom: 5px; }
+        .detail-subtitle { font-size: 14px; color: var(--accent-color); font-weight: 600; }
+        .group-item { margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.6); border-radius: 12px; overflow: hidden; background: rgba(255,255,255,0.85); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .group-header { padding: 15px 20px; background: rgba(240,253,244,0.9); display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: background 0.2s; }
+        .group-header.active { background: var(--accent-gradient); }
+        .group-title { font-size: 13px; font-weight: 800; color: var(--primary-text); text-transform: uppercase; }
+        .group-header.active .group-title { color: white; }
+        .group-icon { font-size: 12px; color: #94a3b8; transition: transform 0.3s; }
+        .group-header.active .group-icon { transform: rotate(180deg); color: white; }
+        .group-content { display: none; padding: 20px; background: white; }
+        .group-content.open { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .detail-row { display: grid; grid-template-columns: 1fr; gap: 4px; padding: 8px 0; border-bottom: 1px dashed var(--separator-line); }
+        .detail-row:last-child { border-bottom: none; }
+        .detail-label { font-size: 12px; font-weight: 700; color: var(--accent-color); text-transform: uppercase; }
+        .detail-value { font-size: 15px; font-weight: 500; color: var(--primary-text); line-height: 1.5; word-break: break-word; }
+        .warning-text { color: var(--danger-color); font-weight: 700; }
+        #errorMessage { background: rgba(255,255,255,0.95) !important; }
+        #errorMessage i { color: var(--danger-color) !important; }
+        .retry-btn { margin-top: 15px; background: var(--accent-gradient); color: white; border: none; padding: 10px 24px; border-radius: 20px; font-size: 14px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+        .error-detail { font-size: 12px; color: #64748b; margin-top: 8px; padding: 8px 12px; background: #f1f5f9; border-radius: 8px; word-break: break-word; }
+        footer { text-align: center; font-size: 12px; font-weight: 600; color: #ffffff; padding: 8px 18px; margin-top: 10px; background: rgba(10, 55, 20, 0.72); backdrop-filter: blur(8px); border-radius: 12px; border: 1px solid rgba(50,160,80,0.35); width: fit-content; align-self: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        @media (min-width: 640px) {
+            body { padding: 20px; }
+            .container { max-width: 1400px; padding-bottom: 20px; flex: 0 0 auto; min-height: auto; background: rgba(20, 120, 50, 0.18); backdrop-filter: blur(2px); border-radius: 24px; padding: 16px; }
+            header { padding: 25px 35px; margin-bottom: 25px; border-radius: 24px; }
+            .header-content h1 { font-size: 28px; gap: 15px; letter-spacing: 0.5px; }
+            .header-subtitle { font-size: 17px; margin-top: 5px; }
+            .pc-warning-badge { margin-top: 15px; background: var(--amber-bg); color: var(--amber-color); border: 1px solid rgba(251,191,36,0.5); padding: 8px 24px; border-radius: 50px; font-size: 16px; font-weight: 700; display: inline-flex; align-items: center; gap: 10px; animation: pulse 2s infinite; }
+            @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(251,191,36,0.4);}70%{box-shadow:0 0 0 10px rgba(251,191,36,0);}100%{box-shadow:0 0 0 0 rgba(251,191,36,0);} }
+            .search-container { padding: 30px; border-radius: 30px; margin-bottom: 30px; }
+            .search-box-wrapper { max-width: 800px; margin: 0 auto; }
+            #searchInput { padding: 18px 55px 18px 25px; border-radius: 16px; border-width: 2px; }
+            .suggestions { max-width: 800px; margin: 15px auto 0 auto; }
+            .search-option { padding: 10px 22px; font-size: 17px; border-radius: 14px; }
+            .mobile-text { display: none; }
+            .pc-text { display: inline; }
+            .list-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(300px,1fr)); gap: 18px; }
+            .list-title { font-size: 18px; padding: 8px 20px; border-radius: 30px; }
+            .list-count { font-size: 16px; padding: 8px 16px; border-radius: 20px; }
+            .list-item { padding: 20px; border-radius: 18px; }
+            .item-main { font-size: 18px; margin-bottom: 5px; }
+            .item-sub { font-size: 15px; }
+            #drugDetail { background: transparent; padding: 10px 0; border-radius: 0; border: none; box-shadow: none; }
+            .detail-card-main { background: rgba(255,255,255,0.88); backdrop-filter: blur(10px); border-radius: 20px; padding: 25px 20px; text-align: center; margin-bottom: 16px; border: 1px solid var(--glass-border); box-shadow: 0 6px 18px rgba(0,0,0,0.12); }
+            .detail-header-group { margin-bottom: 16px; display: flex; justify-content: center; align-items: center; gap: 12px; flex-wrap: wrap; }
+            .drug-big-title { font-size: 28px; font-weight: 800; color: var(--accent-dark); line-height: 1.25; }
+            .detail-title { font-size: 26px; font-weight: 800; line-height: 1.25; }
+            .detail-subtitle { font-size: 17px; font-weight: 700; margin-top: 6px; }
+            .drug-sub-title { font-size: 19px; color: var(--accent-color); margin-top: 6px; font-weight: 700; }
+            .danger-tag { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; padding: 8px 16px; border-radius: 12px; font-weight: 700; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+            .info-group { margin-bottom: 10px; }
+            .group-label { font-size: 16px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-dark); font-weight: 800; margin-bottom: 15px; background: var(--accent-bg); padding: 8px 14px; border-radius: 8px; width: fit-content; display: flex; align-items: center; gap: 10px; }
+            .detail-row { grid-template-columns: 1fr; gap: 5px; padding: 12px 0; }
+            .detail-label { font-size: 15px; }
+            .detail-value { font-size: 18px; font-weight: 600; line-height: 1.6; }
+            .google-link { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: #ef4444; font-weight: 700; font-size: 16px; margin-top: 15px; padding: 10px 16px; border-radius: 10px; transition: 0.2s; background: rgba(255,255,255,0.8); border: 1px solid #fecaca; }
+            .google-link:hover { background: #fee2e2; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(239,68,68,0.1); }
+            .back-btn { padding: 10px 20px; margin-bottom: 20px; }
+            footer { font-size: 16px; padding: 8px 24px; border-radius: 24px; margin-top: 10px; color: #ffffff; }
+            .group-item { border-radius: 16px; margin-bottom: 16px; box-shadow: 0 6px 18px rgba(0,0,0,0.13); }
+            .group-header { padding: 16px 22px; }
+            .group-title { font-size: 16px; letter-spacing: 0.3px; }
+            .group-content { padding: 22px 26px; }
+        }
+        @media (min-width: 640px) and (max-width: 800px) {
+            body { padding: 8px; }
+            .container { padding: 10px 10px 14px 10px; border-radius: 16px; }
+            header { padding: 14px 18px; margin-bottom: 16px; border-radius: 18px; }
+            .header-content h1 { font-size: 21px; gap: 10px; letter-spacing: 0; }
+            .header-subtitle { font-size: 15px; margin-top: 3px; }
+            .pc-warning-badge { padding: 6px 16px; font-size: 15px; margin-top: 10px; }
+            .search-container { padding: 14px 16px; border-radius: 22px; margin-bottom: 14px; }
+            .search-box-wrapper { max-width: 100%; }
+            #searchInput { padding: 13px 46px 13px 18px; font-size: 18px; border-radius: 14px; }
+            .search-option { padding: 8px 14px; font-size: 16px; border-radius: 12px; }
+            .list-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .list-item { padding: 13px 15px; border-radius: 14px; margin-bottom: 0; }
+            .item-main { font-size: 17px; margin-bottom: 3px; }
+            .item-sub { font-size: 15px; }
+            .list-title { font-size: 17px; padding: 6px 16px; }
+            .list-count { font-size: 15px; padding: 5px 12px; }
+            #drugDetail { padding: 8px 0; border-radius: 0; background: transparent; border: none; box-shadow: none; }
+            .detail-header-group { margin-bottom: 14px; justify-content: center; flex-wrap: wrap; }
+            .drug-big-title { font-size: 24px; }
+            .detail-title { font-size: 22px; }
+            .detail-subtitle { font-size: 15px; margin-top: 5px; }
+            .drug-sub-title { font-size: 17px; margin-top: 4px; }
+            .danger-tag { font-size: 15px; padding: 6px 12px; }
+            .google-link { font-size: 15px; margin-top: 10px; padding: 8px 13px; }
+            .group-item { border-radius: 13px; margin-bottom: 12px; box-shadow: 0 5px 14px rgba(0,0,0,0.12); }
+            .group-header { padding: 13px 16px; }
+            .group-title { font-size: 15px; }
+            .group-content { padding: 14px 18px; }
+            .detail-row { grid-template-columns: 1fr; gap: 5px; padding: 10px 0; }
+            .detail-label { font-size: 15px; text-align: left; }
+            .detail-value { font-size: 18px; line-height: 1.55; font-weight: 600; }
+            .back-btn { padding: 8px 16px; margin-bottom: 14px; font-size: 15px; }
+            footer { font-size: 15px; padding: 6px 18px; border-radius: 16px; margin-top: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient-light"></div>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1><i class="fas fa-syringe" style="color:var(--accent-dark);"></i> CÔNG CỤ TRA CỨU THUỐC - HOẠT CHẤT</h1>
+                <p class="header-subtitle">Hỗ trợ cán bộ y tế - BVĐK Tuyên Quang</p>
+            </div>
+            <div class="pc-warning-badge">
+                <i class="fas fa-exclamation-circle"></i> Kiểm tra kỹ thông tin trước khi sử dụng thuốc
+            </div>
+        </header>
+
+        <div class="search-container">
+            <div class="search-box-wrapper">
+                <input type="text" id="searchInput" placeholder="Tìm tên thuốc, hoạt chất...">
+                <i class="fas fa-search search-icon" id="searchBtn"></i>
+            </div>
+            <div class="suggestions" id="suggestions"></div>
+            <div class="search-options">
+                <div class="search-option" data-type="all"><i class="fas fa-list-ul"></i> Tất cả</div>
+                <div class="search-option" data-type="hoat-chat"><i class="fas fa-vial"></i> Hoạt chất</div>
+                <div class="search-option" data-type="nguy-co-cao">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span class="mobile-text">Nguy cơ cao</span>
+                    <span class="pc-text">Thuốc nguy cơ cao</span>
+                </div>
+            </div>
+        </div>
+
+        <section id="resultsSection">
+            <div class="glass-panel" id="initialPrompt">
+                <i class="fas fa-circle-notch fa-spin" style="color:var(--accent-color);" id="initialIcon"></i>
+                <p id="initialText">Đang tải dữ liệu, vui lòng chờ...</p>
+            </div>
+            <div class="loader" id="loader" style="display:none"><i class="fas fa-circle-notch fa-spin"></i> Đang tải...</div>
+            <div class="glass-panel" id="errorMessage" style="display:none;">
+                <i class="fas fa-exclamation-circle" style="color:var(--danger-color);"></i>
+                <p id="errorText" style="color:var(--danger-color); font-weight:700;">Lỗi kết nối dữ liệu</p>
+                <p id="errorDetail" class="error-detail" style="display:none;"></p>
+                <button class="retry-btn" onclick="retryFetch()"><i class="fas fa-redo"></i> Thử lại</button>
+            </div>
+            <div id="listView" style="display:none;"></div>
+            <div id="drugDetail"></div>
+            <div class="glass-panel" id="noResults" style="display:none;">
+                <i class="fas fa-search-minus"></i>
+                <p>Không tìm thấy kết quả</p>
+            </div>
+        </section>
+
+        <footer>Khoa Dược - BVĐK Tuyên Quang</footer>
+    </div>
+
+<script>
+    'use strict';
+
+    // ===================== API CẤU HÌNH =====================
+    // DÁN LINK WEB APP BẠN ĐÃ DEPLOY TỪ APPS SCRIPT VÀO ĐÂY (PHẢI CÓ ?api=true)
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzqIUQ_tkRsN1-CC_OKT8hWIB_W_3X_a6XnOC84L11gVzjN75nOChV0G-8apQme93wu/exec?api=true';
+
+    // ===================== PRELOAD ẢNH NỀN =====================
+    var BG_URL = 'https://lh3.googleusercontent.com/d/1709K3NPWawSXEIQPLvwO_fbcxjdNgJE7';
+    var bgLoaded = false;
+
+    function applyBackground() {
+        document.body.style.background = "url('" + BG_URL + "') center center / cover no-repeat fixed";
+        bgLoaded = true;
+    }
+
+    (function preloadBg() {
+        var img = new Image();
+        img.onload  = applyBackground;
+        img.onerror = applyBackground; 
+        img.src = BG_URL;
+    })();
+
+    // ===================== CENTERING UI =====================
+    var isAtHome = true; 
+
+    function getVH() {
+        return document.documentElement.clientHeight || window.innerHeight || document.body.clientHeight || 0;
+    }
+
+    function centerUI(animate) {
+        var cont = document.querySelector('.container');
+        if (!cont) return;
+        var viewH = getVH();
+        if (viewH < 50) {
+            setTimeout(function(){ centerUI(animate); }, 150);
+            return;
+        }
+        var contH = cont.offsetHeight;
+        var mt = Math.max(0, Math.floor((viewH - contH) / 2) - 5);
+        if (!animate) {
+            cont.style.transition = 'none';
+            cont.style.marginTop = mt + 'px';
+            requestAnimationFrame(function(){
+                cont.style.transition = 'margin-top 0.55s cubic-bezier(0.4,0,0.2,1)';
+            });
+        } else {
+            cont.style.transition = 'margin-top 0.55s cubic-bezier(0.4,0,0.2,1)';
+            cont.style.marginTop = mt + 'px';
+        }
+    }
+
+    function moveToTop() {
+        isAtHome = false;
+        var cont = document.querySelector('.container');
+        if (!cont) return;
+        cont.style.transition = 'margin-top 0.55s cubic-bezier(0.4,0,0.2,1)';
+        cont.style.marginTop = '0px';
+    }
+
+    window.addEventListener('resize', function() {
+        if (isAtHome) setTimeout(function(){ centerUI(false); }, 50);
+    });
+
+    var allData = [];
+    var lastViewMode = 'home';
+    var lastRenderedData = [];
+    var lastRenderedTitle = '';
+    var loadTimer = null;
+
+    var loader         = document.getElementById('loader');
+    var listView       = document.getElementById('listView');
+    var drugDetail     = document.getElementById('drugDetail');
+    var errorMessage   = document.getElementById('errorMessage');
+    var errorText      = document.getElementById('errorText');
+    var errorDetail    = document.getElementById('errorDetail');
+    var searchInput    = document.getElementById('searchInput');
+    var searchBtn      = document.getElementById('searchBtn');
+    var suggestionsBox = document.getElementById('suggestions');
+    var noResults      = document.getElementById('noResults');
+    var initialPrompt  = document.getElementById('initialPrompt');
+    var initialIcon    = document.getElementById('initialIcon');
+    var initialTextEl  = document.getElementById('initialText');
+    var resultsSection = document.getElementById('resultsSection');
+
+    document.addEventListener('DOMContentLoaded', function() {
+        hideAllViews();
+        initialPrompt.style.display = 'block';
+        setLoadingState(true);
+        setupEvents();
+        fetchData();
+    });
+
+    // ===================== GỌI API FETCH DATA MỚI =====================
+    async function fetchData() {
+        if (loadTimer) clearTimeout(loadTimer);
+
+        loadTimer = setTimeout(function() {
+            showError('Quá thời gian tải (15 giây).', 'Vui lòng tải lại trang.');
+        }, 15000);
+
+        try {
+            const response = await fetch(API_URL);
+            
+            if (!response.ok) {
+                throw new Error('Lỗi kết nối máy chủ: ' + response.status);
+            }
+
+            const data = await response.json();
+            clearTimeout(loadTimer);
+
+            if (!Array.isArray(data)) throw new Error('Dữ liệu API không đúng định dạng mảng.');
+
+            allData = data;
+            setLoadingState(false);
+            hideAllViews();
+            initialPrompt.style.display = 'block';
+            isAtHome = true;
+            setTimeout(function(){ centerUI(true); }, 60);
+            setTimeout(function(){ if (isAtHome) centerUI(false); }, 400);
+
+        } catch (error) {
+            clearTimeout(loadTimer);
+            showError('Lỗi tải dữ liệu: ' + error.message, 'Hãy kiểm tra Link API Web App.');
+        }
+    }
+
+    function retryFetch() {
+        hideAllViews();
+        initialPrompt.style.display = 'block';
+        setLoadingState(true);
+        fetchData();
+        setTimeout(function(){ centerUI(false); }, 50);
+    }
+
+    function showError(msg, detail) {
+        setLoadingState(false);
+        hideAllViews();
+        errorText.textContent = msg || 'Lỗi kết nối dữ liệu';
+        if (detail) {
+            errorDetail.textContent = detail;
+            errorDetail.style.display = 'block';
+        } else {
+            errorDetail.style.display = 'none';
+        }
+        errorMessage.style.display = 'block';
+        setTimeout(function(){ centerUI(true); }, 30);
+    }
+
+    // ===================== UI STATE =====================
+    function setLoadingState(isLoading) {
+        if (isLoading) {
+            searchInput.disabled = true;
+            searchInput.placeholder = 'Đang tải dữ liệu...';
+            searchInput.style.opacity = '0.5';
+            searchInput.style.cursor = 'not-allowed';
+            searchBtn.style.pointerEvents = 'none';
+            searchBtn.style.opacity = '0.4';
+            document.querySelectorAll('.search-option').forEach(function(b) {
+                b.style.pointerEvents = 'none';
+                b.style.opacity = '0.4';
+            });
+        } else {
+            searchInput.disabled = false;
+            searchInput.placeholder = 'Tìm tên thuốc, hoạt chất...';
+            searchInput.style.opacity = '';
+            searchInput.style.cursor = '';
+            searchBtn.style.pointerEvents = '';
+            searchBtn.style.opacity = '';
+            document.querySelectorAll('.search-option').forEach(function(b) {
+                b.style.pointerEvents = '';
+                b.style.opacity = '';
+            });
+            initialIcon.className = 'fas fa-search';
+            initialIcon.style.color = 'var(--accent-color)';
+            initialTextEl.textContent = 'Hãy nhập từ khóa hoặc lựa chọn danh mục';
+        }
+    }
+
+    function hideAllViews() {
+        initialPrompt.style.display = 'none';
+        loader.style.display = 'none';
+        errorMessage.style.display = 'none';
+        listView.style.display = 'none';
+        drugDetail.style.display = 'none';
+        noResults.style.display = 'none';
+    }
+
+    function showHome() {
+        isAtHome = true;
+        hideAllViews();
+        initialPrompt.style.display = 'block';
+        requestAnimationFrame(function() {
+            setTimeout(function() { centerUI(true); }, 20);
+        });
+    }
+
+    function showResultsView() {
+        moveToTop();
+    }
+
+    // ===================== UTILS =====================
+    function escHtml(s) {
+        return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+    function escJs(s) {
+        return String(s || '').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'\\"').replace(/\n/g,'\\n').replace(/\r/g,'');
+    }
+    function fmtText(s) { return escHtml(s).replace(/\n/g,'<br>'); }
+
+    function normDriveUrl(url) {
+        var u = url || '';
+        if (u.includes('drive.google.com')) {
+            var m = u.match(/\/file\/d\/([^\/\?]+)/) || u.match(/\/d\/([^\/\?]+)/) || u.match(/[?&]id=([^&]+)/);
+            if (m) return 'https://lh3.googleusercontent.com/d/' + m[1];
+        }
+        return u;
+    }
+
+    function updateSearchIcon(val) {
+        if (val && val.trim()) {
+            searchBtn.classList.remove('fa-search');
+            searchBtn.classList.add('fa-times');
+        } else {
+            searchBtn.classList.remove('fa-times');
+            searchBtn.classList.add('fa-search');
+        }
+    }
+
+    // ===================== EVENTS =====================
+    function setupEvents() {
+        searchInput.addEventListener('input', function(e) {
+            var val = e.target.value.toLowerCase();
+            updateSearchIcon(e.target.value);
+            if (!val) {
+                suggestionsBox.style.display = 'none';
+                document.querySelectorAll('.search-option').forEach(function(b){ b.classList.remove('active'); });
+                showHome();
+                return;
+            }
+            var filtered = allData.filter(function(r) {
+                return (r['Biệt dược']?.value||'').toLowerCase().includes(val) ||
+                       (r['Hoạt chất']?.value||'').toLowerCase().includes(val);
+            }).slice(0,8);
+            if (filtered.length > 0) {
+                suggestionsBox.innerHTML = filtered.map(function(r) {
+                    var brand = r['Biệt dược']?.value || '';
+                    var ing = r['Hoạt chất']?.value || '';
+                    return '<div onclick="selectSuggestion(\'' + escJs(brand) + '\')">' +
+                           '<i class="fas fa-search" style="color:var(--accent-color);opacity:0.6"></i> ' +
+                           '<span><span class="sug-ing">' + escHtml(ing) + '</span> <span style="color:#cbd5e1">|</span> <span class="sug-brand">' + escHtml(brand) + '</span></span>' +
+                           '</div>';
+                }).join('');
+                suggestionsBox.style.display = 'block';
+            } else {
+                suggestionsBox.style.display = 'none';
+            }
+        });
+
+        searchBtn.addEventListener('click', function() {
+            var val = searchInput.value;
+            if (val) {
+                searchInput.value = '';
+                updateSearchIcon('');
+                suggestionsBox.style.display = 'none';
+                document.querySelectorAll('.search-option').forEach(function(b){ b.classList.remove('active'); });
+                showHome(); 
+                searchInput.focus();
+            } else {
+                searchInput.focus();
+            }
+        });
+
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && searchInput.value) {
+                suggestionsBox.style.display = 'none';
+                executeSearch(searchInput.value);
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.search-box-wrapper') && !e.target.closest('#suggestions')) {
+                suggestionsBox.style.display = 'none';
+            }
+        });
+
+        document.querySelectorAll('.search-option').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var isActive = btn.classList.contains('active');
+                document.querySelectorAll('.search-option').forEach(function(b){ b.classList.remove('active'); });
+                if (isActive) {
+                    searchInput.value = '';
+                    updateSearchIcon('');
+                    suggestionsBox.style.display = 'none';
+                    showHome();
+                    lastViewMode = 'home';
+                } else {
+                    btn.classList.add('active');
+                    handleFilterClick(btn.getAttribute('data-type'));
+                }
+            });
+        });
+    }
+
+    function executeSearch(val) {
+        val = (val || '').toLowerCase().trim();
+        if (!val) {
+            suggestionsBox.style.display = 'none';
+            showHome();
+            document.querySelectorAll('.search-option').forEach(function(b){ b.classList.remove('active'); });
+            return;
+        }
+        var results = allData.filter(function(r) {
+            return (r['Biệt dược']?.value||'').toLowerCase().includes(val) ||
+                   (r['Hoạt chất']?.value||'').toLowerCase().includes(val);
+        });
+        hideAllViews();
+        if (results.length > 0) {
+            renderList(results,'Biệt dược','Hoạt chất','Kết quả tìm kiếm');
+            listView.style.display = 'block';
+            lastViewMode = 'list';
+            lastRenderedData = results;
+            lastRenderedTitle = 'Kết quả tìm kiếm';
+        } else {
+            noResults.style.display = 'block';
+        }
+        showResultsView();
+        if (window.innerWidth >= 640) resultsSection.scrollIntoView({behavior:'smooth'});
+    }
+
+    function selectSuggestion(val) {
+        searchInput.value = val;
+        updateSearchIcon(val);
+        suggestionsBox.style.display = 'none';
+        showDetail(val);
+    }
+
+    function handleFilterClick(type) {
+        searchInput.value = '';
+        updateSearchIcon('');
+        hideAllViews();
+        loader.style.display = 'block';
+        setTimeout(function() {
+            loader.style.display = 'none';
+            if (type === 'all') {
+                renderList(allData,'Biệt dược','Hoạt chất','Tất cả thuốc');
+                listView.style.display = 'block';
+                lastViewMode = 'list'; lastRenderedData = allData; lastRenderedTitle = 'Tất cả thuốc';
+            } else if (type === 'hoat-chat') {
+                renderByIngredient();
+                listView.style.display = 'block';
+                lastViewMode = 'ingredient';
+            } else if (type === 'nguy-co-cao') {
+                var highRisk = allData.filter(function(r) {
+                    var v = (r['Cảnh báo thuốc']?.value || r['Cảnh bảo thuốc']?.value || '').toLowerCase();
+                    return v.includes('có') || v.includes('nguy cơ');
+                });
+                if (highRisk.length > 0) {
+                    var title = window.innerWidth >= 640 ? 'Danh sách Nguy cơ cao' : 'Thuốc nguy cơ cao';
+                    renderList(highRisk,'Biệt dược','Hoạt chất',title);
+                    listView.style.display = 'block';
+                    lastViewMode = 'list'; lastRenderedData = highRisk; lastRenderedTitle = title;
+                } else {
+                    noResults.style.display = 'block';
+                    noResults.querySelector('p').innerText = 'Không có thuốc nguy cơ cao';
+                }
+            }
+            showResultsView();
+            if (window.innerWidth >= 640) resultsSection.scrollIntoView({behavior:'smooth'});
+        }, 250);
+    }
+
+    // ===================== RENDER =====================
+    function renderList(data, titleKey, subKey, listTitle) {
+        var sorted = data.slice().sort(function(a,b){ return (a[titleKey]?.value||'').localeCompare(b[titleKey]?.value||''); });
+        var html = '<div class="list-header"><span class="list-title">' + escHtml(listTitle) + '</span><span class="list-count">' + sorted.length + ' thuốc</span></div><div class="list-grid">';
+        sorted.forEach(function(item) {
+            var title = item[titleKey]?.value || 'Chưa cập nhật';
+            var sub = item[subKey]?.value || '';
+            var warnVal = (item['Cảnh báo thuốc']?.value || item['Cảnh bảo thuốc']?.value || '').toLowerCase();
+            var isHR = warnVal.includes('có') || warnVal.includes('nguy cơ');
+            html += '<div class="list-item" onclick="showDetail(\'' + escJs(title) + '\')">' +
+                    '<div class="item-content"><span class="item-main"' + (isHR?' style="color:var(--danger-color)"':'') + '>' + escHtml(title) + '</span>' +
+                    '<span class="item-sub">' + escHtml(sub) + '</span></div>' +
+                    '<i class="fas fa-chevron-right item-arrow"></i></div>';
+        });
+        listView.innerHTML = html + '</div>';
+    }
+
+    function renderByIngredient() {
+        var groups = {};
+        allData.forEach(function(item) {
+            var ing = item['Hoạt chất']?.value || 'Khác';
+            if (!groups[ing]) groups[ing] = [];
+            groups[ing].push(item);
+        });
+        var keys = Object.keys(groups).sort(function(a,b){ return a.localeCompare(b); });
+        var html = '<div class="list-header"><span class="list-title">Danh sách Hoạt chất</span><span class="list-count">' + keys.length + ' hoạt chất</span></div><div class="list-grid">';
+        keys.forEach(function(ing) {
+            html += '<div class="list-item" onclick="showDrugsByIngredient(\'' + escJs(ing) + '\')">' +
+                    '<div class="item-content"><span class="item-main">' + escHtml(ing) + '</span>' +
+                    '<span class="item-sub">' + groups[ing].length + ' biệt dược</span></div>' +
+                    '<i class="fas fa-chevron-right item-arrow"></i></div>';
+        });
+        listView.innerHTML = html + '</div>';
+    }
+
+    window.showDetail = function(brandName) {
+        var drug = allData.find(function(i){ return i['Biệt dược']?.value === brandName; });
+        if (!drug) return;
+        hideAllViews();
+        moveToTop();
+        if (window.innerWidth >= 640) renderDetailPC(drug); else renderDetailMobile(drug);
+        drugDetail.style.display = 'block';
+        if (window.innerWidth < 640) window.scrollTo({top:0,behavior:'smooth'});
+        else resultsSection.scrollIntoView({behavior:'smooth'});
+    };
+
+    function renderDetailMobile(drug) {
+        var dn = drug['Biệt dược']?.value || '';
+        var ing = drug['Hoạt chất']?.value || '';
+        var wv = (drug['Cảnh báo thuốc']?.value || drug['Cảnh bảo thuốc']?.value || '').toLowerCase();
+        var isHR = wv.includes('nguy cơ') || wv.includes('có');
+        var html = '<button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i> Quay lại</button>' +
+            '<div class="detail-card-main">' +
+            '<div class="detail-title">' + escHtml(dn) + '</div>' +
+            '<div class="detail-subtitle">' + escHtml(ing) + '</div>' +
+            (isHR ? '<div onclick="searchHighRiskGoogle(\'' + escJs(dn) + '\')" style="margin-top:10px;color:var(--danger-color);font-weight:700;font-size:13px;border:1px solid #fca5a5;padding:5px 10px;border-radius:10px;display:inline-block;background:rgba(255,255,255,0.8);cursor:pointer"><i class="fas fa-exclamation-triangle"></i> NGUY CƠ CAO (Bấm kiểm chứng)</div>' : '') +
+            '</div>';
+        html += generateContentHtml(drug,'accordion');
+        drugDetail.innerHTML = html;
+    }
+
+    function renderDetailPC(drug) {
+        var dn = drug['Biệt dược']?.value || '';
+        var ing = drug['Hoạt chất']?.value || '';
+        var wv = (drug['Cảnh báo thuốc']?.value || drug['Cảnh bảo thuốc']?.value || '').toLowerCase();
+        var isHR = wv.includes('nguy cơ') || wv.includes('có');
+        var gUrl = 'https://www.google.com/search?q=' + encodeURIComponent(dn + ' thuốc nguy cơ cao');
+        var html = '<button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i> Quay lại</button>' +
+            '<div class="detail-card-main">' +
+            '<div class="detail-title"' + (isHR?' style="color:var(--danger-color)"':'') + '>' + escHtml(dn) + '</div>' +
+            '<div class="detail-subtitle">' + escHtml(ing) + '</div>' +
+            (isHR ? '<div style="margin-top:10px"><div class="danger-tag" style="display:inline-flex"><i class="fas fa-radiation"></i> THUỐC NGUY CƠ CAO</div></div>' : '') +
+            (isHR ? '<a href="' + gUrl + '" target="_blank" rel="noopener noreferrer" class="google-link"><i class="fab fa-google"></i> Kiểm chứng Nguy cơ cao</a>' : '') +
+            '</div>';
+        html += generateContentHtml(drug,'accordion');
+        drugDetail.innerHTML = html;
+    }
+
+    function generateContentHtml(item, type) {
+        var groupDefs = type === 'accordion' ? {
+            'Thông tin chung': ['Dạng bào chế','Đường tiêm','Cảnh báo thuốc'],
+            'Liều & Cách dùng': ['Liều tối đa','CÁCH DÙNG'],
+            'Pha chế & Bảo quản': ['Dung môi hoàn nguyên','Cách hoàn nguyên','Dung môi pha loãng','Nồng độ khuyến nghị','Bảo quản sau hoàn nguyên','Bảo quản sau pha loãng'],
+            'Lưu ý lâm sàng': ['Thời gian/tốc độ khuyến cáo tiêm, truyền tĩnh mạch','Lưu ý khi tiêm, truyền tĩnh mạch','Tương hợp','Tương kỵ'],
+            'Tài liệu tham khảo': ['Biệt dược tham khảo','Tài liệu tham khảo','Hình ảnh biệt dược tại bệnh viện']
+        } : {
+            'Đặc điểm chung': ['Dạng bào chế','Đường tiêm','Cảnh báo thuốc'],
+            'Chỉ định & Liều dùng': ['Nhóm tác dụng dược lý','Chống chỉ định','Liều tối đa','CÁCH DÙNG'],
+            'Pha chế & Bảo quản': ['Dung môi hoàn nguyên','Cách hoàn nguyên','Dung môi pha loãng','Nồng độ khuyến nghị','Bảo quản sau hoàn nguyên','Bảo quản sau pha loãng'],
+            'Sử dụng & Theo dõi': ['Thời gian/tốc độ khuyến cáo tiêm, truyền tĩnh mạch','Lưu ý khi tiêm, truyền tĩnh mạch'],
+            'Tương tác thuốc': ['Tương hợp','Tương kỵ'],
+            'Tài liệu & Hình ảnh': ['Biệt dược tham khảo','Tài liệu tham khảo','Hình ảnh biệt dược tại bệnh viện']
+        };
+
+        var html = '';
+        var dn = item['Biệt dược']?.value || '';
+
+        Object.keys(groupDefs).forEach(function(groupName) {
+            var fields = groupDefs[groupName];
+            var rows = '';
+            var hasData = false;
+
+            fields.forEach(function(field) {
+                var rawVal = item[field]?.value;
+                if (!rawVal || rawVal.toString().trim() === '') return;
+                hasData = true;
+                var val = rawVal.toString();
+                var isWarn = field.includes('Cảnh báo') || field.includes('Lưu ý') || field.includes('Chống chỉ định');
+
+                if (field === 'Cảnh báo thuốc' || field === 'Cảnh bảo thuốc') {
+                    var vl = val.toLowerCase();
+                    if (vl.includes('có') || vl.includes('nguy cơ')) {
+                        val = type === 'accordion'
+                            ? '<span onclick="searchHighRiskGoogle(\'' + escJs(dn) + '\')" style="color:var(--danger-color);font-weight:700;cursor:pointer;text-decoration:underline;">NGUY CƠ CAO</span>'
+                            : '<span style="color:var(--danger-color);font-weight:800;font-size:16px;">NGUY CƠ CAO</span>';
+                    } else {
+                        val = (type === 'grid') ? '<span class="warning-text">' + escHtml(val) + '</span>' : fmtText(val);
+                    }
+                } else if (field === 'Tài liệu tham khảo' && val.match(/^https?:\/\//)) {
+                    val = '<a href="' + escHtml(val) + '" target="_blank" rel="noopener noreferrer" style="color:var(--accent-color);font-weight:bold">Xem tài liệu gốc</a>';
+                } else if (field.includes('Hình ảnh') && val.match(/^https?:\/\//)) {
+                    var imgUrl = normDriveUrl(val);
+                    val = '<img src="' + escHtml(imgUrl) + '" alt="Hình ảnh biệt dược" style="max-width:100%;border-radius:12px;margin-top:5px;box-shadow:0 2px 8px rgba(0,0,0,0.15)">';
+                } else {
+                    val = fmtText(val);
+                    if (type === 'grid' && isWarn) val = '<span class="warning-text">' + val + '</span>';
+                }
+
+                rows += '<div class="detail-row">' +
+                        '<div class="detail-label">' + escHtml(field) + '</div>' +
+                        '<div class="detail-value">' + val + '</div>' +
+                        '</div>';
+            });
+
+            if (hasData) {
+                if (type === 'accordion') {
+                    html += '<div class="group-item"><div class="group-header" onclick="toggleGroup(this)">' +
+                            '<span class="group-title">' + escHtml(groupName) + '</span>' +
+                            '<i class="fas fa-chevron-down group-icon"></i></div>' +
+                            '<div class="group-content">' + rows + '</div></div>';
+                } else {
+                    html += '<div class="info-group"><div class="group-label">' + escHtml(groupName) + '</div>' + rows + '</div>';
+                }
+            }
+        });
+
+        return html || '<div style="padding:20px;text-align:center;color:#64748b;font-style:italic">Chưa có dữ liệu chi tiết.</div>';
+    }
+
+    window.toggleGroup = function(header) {
+        var content = header.nextElementSibling;
+        if (content.classList.contains('open')) {
+            content.classList.remove('open');
+            header.classList.remove('active');
+        } else {
+            content.classList.add('open');
+            header.classList.add('active');
+        }
+    };
+
+    window.goBack = function() {
+        hideAllViews();
+        if (lastViewMode === 'ingredient') {
+            renderByIngredient();
+            listView.style.display = 'block';
+            showResultsView();
+        } else if (lastRenderedData.length > 0) {
+            renderList(lastRenderedData,'Biệt dược','Hoạt chất',lastRenderedTitle || 'Danh sách');
+            listView.style.display = 'block';
+            showResultsView();
+        } else {
+            showHome();
+        }
+        if (window.innerWidth >= 640) resultsSection.scrollIntoView({behavior:'smooth'});
+    };
+
+    window.showDrugsByIngredient = function(ing) {
+        var drugs = allData.filter(function(i){ return i['Hoạt chất']?.value === ing; });
+        hideAllViews();
+        renderList(drugs,'Biệt dược','Hoạt chất','Hoạt chất: ' + ing);
+        listView.style.display = 'block';
+        lastViewMode = 'list'; lastRenderedData = drugs; lastRenderedTitle = 'Hoạt chất: ' + ing;
+        showResultsView();
+        if (window.innerWidth >= 640) resultsSection.scrollIntoView({behavior:'smooth'});
+    };
+
+    // ===================== CUSTOM OVERLAY SCROLLBAR =====================
+    (function() {
+        if (window.matchMedia('(hover: none)').matches) return;
+        if ('ontouchstart' in window || navigator.maxTouchPoints > 0) return;
+        var track = document.createElement('div'); track.id = 'csb';
+        var thumb = document.createElement('div'); thumb.id = 'csb-thumb';
+        track.appendChild(thumb);
+        document.body.appendChild(track);
+
+        var hideTimer = null, isDragging = false, dragStartY = 0, dragStartScrollTop = 0;
+
+        function getScrollInfo() {
+            return { st: window.pageYOffset || document.documentElement.scrollTop, sh: document.documentElement.scrollHeight, ch: document.documentElement.clientHeight || window.innerHeight };
+        }
+
+        function updateThumb() {
+            var s = getScrollInfo();
+            if (s.sh <= s.ch) { track.classList.remove('show'); return; }
+            var thumbH = Math.max(28, (s.ch / s.sh) * s.ch);
+            thumb.style.height = thumbH + 'px';
+            thumb.style.top = ((s.st / (s.sh - s.ch)) * (s.ch - thumbH)) + 'px';
+        }
+
+        function showBar() { clearTimeout(hideTimer); updateThumb(); if (getScrollInfo().sh > getScrollInfo().ch) track.classList.add('show'); }
+        function hideBar(delay) { clearTimeout(hideTimer); if (!isDragging) hideTimer = setTimeout(function(){ track.classList.remove('show'); }, delay || 900); }
+
+        window.addEventListener('scroll', function() { showBar(); hideBar(900); }, { passive: true });
+
+        if (!window.matchMedia('(hover: none)').matches) {
+            document.addEventListener('mousemove', function(e) {
+                if ((document.documentElement.clientWidth || window.innerWidth) - e.clientX <= 20) { showBar(); clearTimeout(hideTimer); }
+                else if (track.classList.contains('show') && !isDragging) hideBar(900);
+            });
+            document.addEventListener('mouseleave', function(){ hideBar(300); });
+        }
+
+        thumb.style.pointerEvents = 'auto'; thumb.style.cursor = 'pointer';
+        thumb.addEventListener('mousedown', function(e) {
+            e.preventDefault(); isDragging = true; dragStartY = e.clientY; dragStartScrollTop = window.pageYOffset; document.body.style.userSelect = 'none';
+        });
+        document.addEventListener('mousemove', function(e) {
+            if (!isDragging) return;
+            var s = getScrollInfo();
+            window.scrollTo(0, dragStartScrollTop + (((e.clientY - dragStartY) / (s.ch - Math.max(28, (s.ch / s.sh) * s.ch))) * (s.sh - s.ch)));
+            updateThumb();
+        });
+        document.addEventListener('mouseup', function() { if (!isDragging) return; isDragging = false; document.body.style.userSelect = ''; hideBar(900); });
+        window.addEventListener('resize', function(){ if(track.classList.contains('show')) updateThumb(); });
+    })();
+
+    window.addEventListener('load', function() {
+        setTimeout(function(){ if (isAtHome) centerUI(false); }, 100);
+        setTimeout(function(){ if (isAtHome) centerUI(false); }, 500);
+    });
+
+    window.searchHighRiskGoogle = function(drugName) {
+        window.open('https://www.google.com/search?q=' + encodeURIComponent(drugName + ' thuốc nguy cơ cao'), '_blank');
+    };
+</script>
+</body>
+</html>
