@@ -92,11 +92,17 @@
         .detail-label { font-size: 12px; font-weight: 700; color: var(--accent-color); text-transform: uppercase; }
         .detail-value { font-size: 15px; font-weight: 500; color: var(--primary-text); line-height: 1.5; word-break: break-word; }
         .warning-text { color: var(--danger-color); font-weight: 700; }
+        
+        /* Chuyển class danger-tag ra ngoài để áp dụng chung cả Mobile và PC */
+        .danger-tag { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; padding: 6px 12px; border-radius: 12px; font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s ease; cursor: pointer; }
+        .danger-tag:hover { background: #fecaca; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(239,68,68,0.15); }
+        
         #errorMessage { background: rgba(255,255,255,0.95) !important; }
         #errorMessage i { color: var(--danger-color) !important; }
         .retry-btn { margin-top: 15px; background: var(--accent-gradient); color: white; border: none; padding: 10px 24px; border-radius: 20px; font-size: 14px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
         .error-detail { font-size: 12px; color: #64748b; margin-top: 8px; padding: 8px 12px; background: #f1f5f9; border-radius: 8px; word-break: break-word; }
-        footer { text-align: center; font-size: 12px; font-weight: 600; color: #ffd700; padding: 8px 18px; margin-top: 10px; background: rgba(10, 55, 20, 0.72); backdrop-filter: blur(8px); border-radius: 12px; border: 1px solid rgba(50,160,80,0.35); width: fit-content; align-self: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        footer { text-align: center; font-size: 12px; font-weight: 600; color: #ffffff; padding: 8px 18px; margin-top: 10px; background: rgba(10, 55, 20, 0.72); backdrop-filter: blur(8px); border-radius: 12px; border: 1px solid rgba(50,160,80,0.35); width: fit-content; align-self: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
         @media (min-width: 640px) {
             body { padding: 20px; }
             .container { max-width: 1400px; padding-bottom: 20px; flex: 0 0 auto; min-height: auto; background: rgba(20, 120, 50, 0.18); backdrop-filter: blur(2px); border-radius: 24px; padding: 16px; }
@@ -125,16 +131,14 @@
             .detail-title { font-size: 26px; font-weight: 800; line-height: 1.25; }
             .detail-subtitle { font-size: 17px; font-weight: 700; margin-top: 6px; }
             .drug-sub-title { font-size: 19px; color: var(--accent-color); margin-top: 6px; font-weight: 700; }
-            .danger-tag { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; padding: 8px 16px; border-radius: 12px; font-weight: 700; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+            .danger-tag { font-size: 16px; padding: 8px 16px; }
             .info-group { margin-bottom: 10px; }
             .group-label { font-size: 16px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-dark); font-weight: 800; margin-bottom: 15px; background: var(--accent-bg); padding: 8px 14px; border-radius: 8px; width: fit-content; display: flex; align-items: center; gap: 10px; }
             .detail-row { grid-template-columns: 1fr; gap: 5px; padding: 12px 0; }
             .detail-label { font-size: 15px; }
             .detail-value { font-size: 18px; font-weight: 600; line-height: 1.6; }
-            .google-link { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: #ef4444; font-weight: 700; font-size: 16px; margin-top: 15px; padding: 10px 16px; border-radius: 10px; transition: 0.2s; background: rgba(255,255,255,0.8); border: 1px solid #fecaca; }
-            .google-link:hover { background: #fee2e2; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(239,68,68,0.1); }
             .back-btn { padding: 10px 20px; margin-bottom: 20px; }
-            footer { font-size: 16px; padding: 8px 24px; border-radius: 24px; margin-top: 10px; color: #ffd700; }
+            footer { font-size: 16px; padding: 8px 24px; border-radius: 24px; margin-top: 10px; color: #ffffff; }
             .group-item { border-radius: 16px; margin-bottom: 16px; box-shadow: 0 6px 18px rgba(0,0,0,0.13); }
             .group-header { padding: 16px 22px; }
             .group-title { font-size: 16px; letter-spacing: 0.3px; }
@@ -164,7 +168,6 @@
             .detail-subtitle { font-size: 15px; margin-top: 5px; }
             .drug-sub-title { font-size: 17px; margin-top: 4px; }
             .danger-tag { font-size: 15px; padding: 6px 12px; }
-            .google-link { font-size: 15px; margin-top: 10px; padding: 8px 13px; }
             .group-item { border-radius: 13px; margin-bottom: 12px; box-shadow: 0 5px 14px rgba(0,0,0,0.12); }
             .group-header { padding: 13px 16px; }
             .group-title { font-size: 15px; }
@@ -203,9 +206,8 @@
             --amber-bg: rgba(217, 119, 6, 0.2);
             --amber-color: #fcd34d;
         }
-        body.dark-mode { background: #020617; }
         
-        /* ĐÂY LÀ LỚP PHỦ MÀU TỐI LÊN ẢNH NỀN (Độ mờ 82%) */
+        /* LỚP PHỦ MÀU TỐI LÊN ẢNH NỀN */
         body.dark-mode .ambient-light { background: rgba(0, 0, 0, 0.82); }
         
         body.dark-mode .container { background: rgba(15, 23, 42, 0.4); }
@@ -226,9 +228,11 @@
         body.dark-mode .group-header { background: rgba(30, 41, 59, 0.9); }
         body.dark-mode .group-title { color: var(--primary-text); }
         body.dark-mode .group-content { background: rgba(15, 23, 42, 0.95); }
-        body.dark-mode .danger-tag { background: rgba(220, 38, 38, 0.2); border-color: rgba(248, 113, 113, 0.3); }
-        body.dark-mode .google-link { background: rgba(30, 41, 59, 0.8); border-color: rgba(248, 113, 113, 0.3); }
-        body.dark-mode .google-link:hover { background: rgba(220, 38, 38, 0.2); }
+        
+        /* Chỉnh màu Badge ở chế độ Dark Mode cho dễ đọc */
+        body.dark-mode .danger-tag { background: rgba(127, 29, 29, 0.8); color: #fca5a5; border-color: #991b1b; }
+        body.dark-mode .danger-tag:hover { background: rgba(153, 27, 27, 0.9); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.4); }
+
         body.dark-mode #errorMessage { background: rgba(15, 23, 42, 0.95) !important; }
         body.dark-mode .error-detail { background: rgba(30, 41, 59, 0.9); color: #cbd5e1; }
         body.dark-mode footer { background: rgba(15, 23, 42, 0.72); border-color: rgba(255, 255, 255, 0.1); }
@@ -239,7 +243,7 @@
     <div class="container">
         <header>
             <div class="header-content">
-                <h1><i class="fas fa-syringe" id="themeToggle" style="color:var(--accent-dark);" title="Bật/Tắt Giao diện Tối"></i> TRA CỨU THUỐC TIÊM TRUYỀN</h1>
+                <h1><i class="fas fa-syringe" id="themeToggle" style="color:var(--accent-dark);" title="Bật/Tắt Giao diện Tối" onclick="toggleTheme()"></i> TRA CỨU THUỐC TIÊM TRUYỀN</h1>
                 <p class="header-subtitle">Hỗ trợ cán bộ y tế - BVĐK Tuyên Quang</p>
             </div>
             <div class="pc-warning-badge">
@@ -289,6 +293,28 @@
 
 <script>
     'use strict';
+
+    // ===================== LOGIC GIAO DIỆN SÁNG/TỐI (DARK MODE) =====================
+    window.toggleTheme = function() {
+        const isDark = document.body.classList.toggle('dark-mode');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    };
+
+    (function initTheme() {
+        try {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark.matches)) {
+                document.body.classList.add('dark-mode');
+            }
+            prefersDark.addEventListener('change', function(e) {
+                if (!localStorage.getItem('theme')) {
+                    if(e.matches) document.body.classList.add('dark-mode');
+                    else document.body.classList.remove('dark-mode');
+                }
+            });
+        } catch (e) {}
+    })();
 
     // ===================== API CẤU HÌNH =====================
     // DÁN LINK WEB APP BẠN ĐÃ DEPLOY TỪ APPS SCRIPT VÀO ĐÂY (PHẢI CÓ ?api=true)
@@ -375,7 +401,6 @@
     document.addEventListener('DOMContentLoaded', function() {
         hideAllViews();
         initialPrompt.style.display = 'block';
-        // Đã gỡ bỏ trạng thái loading mờ tìm kiếm lúc mới mở web
         setupEvents();
         fetchData();
     });
@@ -713,7 +738,7 @@
             '<div class="detail-card-main">' +
             '<div class="detail-title">' + escHtml(dn) + '</div>' +
             '<div class="detail-subtitle">' + escHtml(ing) + '</div>' +
-            (isHR ? '<div onclick="searchHighRiskGoogle(\'' + escJs(dn) + '\')" style="margin-top:10px;color:var(--danger-color);font-weight:700;font-size:13px;border:1px solid #fca5a5;padding:5px 10px;border-radius:10px;display:inline-block;background:rgba(255,255,255,0.8);cursor:pointer"><i class="fas fa-exclamation-triangle"></i> NGUY CƠ CAO (Bấm kiểm chứng)</div>' : '') +
+            (isHR ? '<div style="margin-top:10px;text-align:center;"><div class="danger-tag" onclick="searchHighRiskGoogle(\'' + escJs(dn) + '\')" style="display:inline-flex;"><i class="fas fa-radiation"></i> THUỐC NGUY CƠ CAO (Bấm kiểm chứng)</div></div>' : '') +
             '</div>';
         html += generateContentHtml(drug,'accordion');
         drugDetail.innerHTML = html;
@@ -724,13 +749,11 @@
         var ing = drug['Hoạt chất']?.value || '';
         var wv = (drug['Cảnh báo thuốc']?.value || drug['Cảnh bảo thuốc']?.value || '').toLowerCase();
         var isHR = wv.includes('nguy cơ') || wv.includes('có');
-        var gUrl = 'https://www.google.com/search?q=' + encodeURIComponent(dn + ' thuốc nguy cơ cao');
         var html = '<button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i> Quay lại</button>' +
             '<div class="detail-card-main">' +
             '<div class="detail-title"' + (isHR?' style="color:var(--danger-color)"':'') + '>' + escHtml(dn) + '</div>' +
             '<div class="detail-subtitle">' + escHtml(ing) + '</div>' +
-            (isHR ? '<div style="margin-top:10px"><div class="danger-tag" style="display:inline-flex"><i class="fas fa-radiation"></i> THUỐC NGUY CƠ CAO</div></div>' : '') +
-            (isHR ? '<a href="' + gUrl + '" target="_blank" rel="noopener noreferrer" class="google-link"><i class="fab fa-google"></i> Kiểm chứng Nguy cơ cao</a>' : '') +
+            (isHR ? '<div style="margin-top:10px;text-align:center;"><div class="danger-tag" onclick="searchHighRiskGoogle(\'' + escJs(dn) + '\')" style="display:inline-flex;"><i class="fas fa-radiation"></i> THUỐC NGUY CƠ CAO (Bấm kiểm chứng)</div></div>' : '') +
             '</div>';
         html += generateContentHtml(drug,'accordion');
         drugDetail.innerHTML = html;
@@ -780,7 +803,8 @@
                     val = '<a href="' + escHtml(val) + '" target="_blank" rel="noopener noreferrer" style="color:var(--accent-color);font-weight:bold">Xem tài liệu gốc</a>';
                 } else if (field.includes('Hình ảnh') && val.match(/^https?:\/\//)) {
                     var imgUrl = normDriveUrl(val);
-                    val = '<img src="' + escHtml(imgUrl) + '" alt="Hình ảnh biệt dược" style="max-width:100%;border-radius:12px;margin-top:5px;box-shadow:0 2px 8px rgba(0,0,0,0.15)">';
+                    // CĂN GIỮA ẢNH THUỐC TẠI ĐÂY
+                    val = '<div style="text-align:center;"><img src="' + escHtml(imgUrl) + '" alt="Hình ảnh biệt dược" style="max-width:100%;border-radius:12px;margin-top:5px;box-shadow:0 2px 8px rgba(0,0,0,0.15)"></div>';
                 } else {
                     val = fmtText(val);
                     if (type === 'grid' && isWarn) val = '<span class="warning-text">' + val + '</span>';
@@ -903,41 +927,6 @@
         window.open('https://www.google.com/search?q=' + encodeURIComponent(drugName + ' thuốc nguy cơ cao'), '_blank');
     };
 
-    // ===================== LOGIC GIAO DIỆN SÁNG/TỐI (DARK MODE) =====================
-    document.addEventListener('DOMContentLoaded', function() {
-        const themeToggle = document.getElementById('themeToggle');
-        
-        // Hàm cập nhật trạng thái giao diện
-        function applyTheme(isDark) {
-            if (isDark) {
-                document.body.classList.add('dark-mode');
-            } else {
-                document.body.classList.remove('dark-mode');
-            }
-        }
-
-        // Lấy thiết lập đã lưu (nếu có) hoặc dựa vào hệ thống
-        const savedTheme = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
-        
-        if (savedTheme === 'dark' || (!savedTheme && prefersDark.matches)) {
-            applyTheme(true);
-        }
-
-        // Lắng nghe sự kiện click vào công tắc (biểu tượng bơm tiêm)
-        themeToggle.addEventListener('click', function() {
-            const isDarkMode = document.body.classList.toggle('dark-mode');
-            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-        });
-
-        // Lắng nghe thay đổi thiết lập hệ thống theo thời gian thực
-        prefersDark.addEventListener('change', function(e) {
-            // Chỉ đổi theo hệ thống nếu người dùng chưa tự bấm công tắc tay
-            if (!localStorage.getItem('theme')) {
-                applyTheme(e.matches);
-            }
-        });
-    });
 </script>
 </body>
 </html>
