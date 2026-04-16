@@ -207,8 +207,8 @@
             --amber-color: #fcd34d;
         }
         
-        /* LỚP PHỦ MÀU TỐI LÊN ẢNH NỀN */
-        body.dark-mode .ambient-light { background: rgba(0, 0, 0, 0.82); }
+        /* LỚP PHỦ MÀU TỐI LÊN ẢNH NỀN BẰNG GRADIENT CÙNG CẤU TRÚC ĐỂ ĐẢM BẢO HOẠT ĐỘNG 100% */
+        body.dark-mode .ambient-light { background: linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.88) 100%) !important; }
         
         body.dark-mode .container { background: rgba(15, 23, 42, 0.4); }
         body.dark-mode header, body.dark-mode .search-container, body.dark-mode .suggestions, body.dark-mode .glass-panel, body.dark-mode .detail-card-main { background: rgba(15, 23, 42, 0.75); }
@@ -514,7 +514,7 @@
 
     // ===================== UTILS =====================
     function escHtml(s) {
-        return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        return String(s || '').replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>').replace(/"/g, '"').replace(/'/g, ''');
     }
     function escJs(s) {
         return String(s || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '');
@@ -738,7 +738,7 @@
             '<div class="detail-card-main">' +
             '<div class="detail-title">' + escHtml(dn) + '</div>' +
             '<div class="detail-subtitle">' + escHtml(ing) + '</div>' +
-            (isHR ? '<div style="margin-top:10px;text-align:center;"><div class="danger-tag" onclick="searchHighRiskGoogle(\'' + escJs(dn) + '\')" style="display:inline-flex;"><i class="fas fa-radiation"></i> THUỐC NGUY CƠ CAO (Bấm kiểm chứng)</div></div>' : '') +
+            (isHR ? '<div style="margin-top:10px;text-align:center;"><div class="danger-tag" onclick="searchHighRiskGoogle(\'' + escJs(dn) + '\')" style="display:inline-flex;"><i class="fas fa-radiation"></i> THUỐC NGUY CƠ CAO</div></div>' : '') +
             '</div>';
         html += generateContentHtml(drug,'accordion');
         drugDetail.innerHTML = html;
@@ -753,7 +753,7 @@
             '<div class="detail-card-main">' +
             '<div class="detail-title"' + (isHR?' style="color:var(--danger-color)"':'') + '>' + escHtml(dn) + '</div>' +
             '<div class="detail-subtitle">' + escHtml(ing) + '</div>' +
-            (isHR ? '<div style="margin-top:10px;text-align:center;"><div class="danger-tag" onclick="searchHighRiskGoogle(\'' + escJs(dn) + '\')" style="display:inline-flex;"><i class="fas fa-radiation"></i> THUỐC NGUY CƠ CAO (Bấm kiểm chứng)</div></div>' : '') +
+            (isHR ? '<div style="margin-top:10px;text-align:center;"><div class="danger-tag" onclick="searchHighRiskGoogle(\'' + escJs(dn) + '\')" style="display:inline-flex;"><i class="fas fa-radiation"></i> THUỐC NGUY CƠ CAO</div></div>' : '') +
             '</div>';
         html += generateContentHtml(drug,'accordion');
         drugDetail.innerHTML = html;
