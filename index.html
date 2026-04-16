@@ -235,6 +235,21 @@
         body.dark-mode #errorMessage { background: rgba(15, 23, 42, 0.95) !important; }
         body.dark-mode .error-detail { background: rgba(30, 41, 59, 0.9); color: #cbd5e1; }
         body.dark-mode footer { background: rgba(15, 23, 42, 0.72); border-color: rgba(255, 255, 255, 0.1); }
+        /* ====== LỚP PHỦ TỐI - DARK MODE OVERLAY (0.72 - tiêu chuẩn) ====== */
+        body.dark-mode::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.72);
+            z-index: 0;
+            pointer-events: none;
+        }
+        body.dark-mode .ambient-light,
+        body.dark-mode .container,
+        body.dark-mode #csb {
+            z-index: 1;
+            position: relative;
+        }
     </style>
 </head>
 <body>
