@@ -175,6 +175,60 @@
             .back-btn { padding: 8px 16px; margin-bottom: 14px; font-size: 15px; }
             footer { font-size: 15px; padding: 6px 18px; border-radius: 16px; margin-top: 8px; }
         }
+
+        /* --- STYLE CHO NÚT CÔNG TẮC DARK MODE --- */
+        #themeToggle {
+            font-size: 1.3em;
+            cursor: pointer;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+        #themeToggle:hover {
+            transform: scale(1.15) rotate(10deg);
+        }
+
+        /* --- BỔ SUNG CSS CHẾ ĐỘ DARK MODE --- */
+        body.dark-mode {
+            --glass-bg: rgba(15, 23, 42, 0.45);
+            --glass-card: rgba(15, 23, 42, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --glass-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.3);
+            --primary-text: #e2e8f0;
+            --accent-color: #4ade80;
+            --accent-dark: #22c55e;
+            --accent-bg: rgba(22, 163, 74, 0.15);
+            --danger-color: #f87171;
+            --separator-line: rgba(74, 222, 128, 0.2);
+            --gray-text: #94a3b8;
+            --teal-navy-text: #cbd5e1;
+            --amber-bg: rgba(217, 119, 6, 0.2);
+            --amber-color: #fcd34d;
+        }
+        body.dark-mode { background: #020617; }
+        body.dark-mode .ambient-light { background: linear-gradient(135deg, rgba(2, 6, 23, 0.85) 0%, rgba(15, 23, 42, 0.85) 100%); }
+        body.dark-mode .container { background: rgba(15, 23, 42, 0.4); }
+        body.dark-mode header, body.dark-mode .search-container, body.dark-mode .suggestions, body.dark-mode .glass-panel, body.dark-mode .detail-card-main { background: rgba(15, 23, 42, 0.75); }
+        body.dark-mode #searchInput { background: rgba(15, 23, 42, 0.85); color: var(--primary-text); border-color: var(--glass-border); }
+        body.dark-mode #searchInput:focus { background: rgba(30, 41, 59, 1); }
+        body.dark-mode .suggestions { background: rgba(15, 23, 42, 0.98); }
+        body.dark-mode .suggestions div { border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        body.dark-mode .suggestions div:hover { background: var(--accent-bg); color: var(--accent-color); }
+        body.dark-mode .sug-ing { color: #e2e8f0; }
+        body.dark-mode .search-option { background: rgba(30, 41, 59, 0.8); }
+        body.dark-mode .list-title, body.dark-mode .list-count { background: rgba(30, 41, 59, 0.9); color: var(--accent-color); }
+        body.dark-mode .list-item { background: rgba(15, 23, 42, 0.85); }
+        body.dark-mode .list-item:hover { background: rgba(30, 41, 59, 1); border-color: var(--accent-color); }
+        body.dark-mode .item-sub { color: #94a3b8; }
+        body.dark-mode .back-btn { background: rgba(30, 41, 59, 0.9); color: #cbd5e1; }
+        body.dark-mode .group-item { background: rgba(15, 23, 42, 0.85); border-color: var(--glass-border); }
+        body.dark-mode .group-header { background: rgba(30, 41, 59, 0.9); }
+        body.dark-mode .group-title { color: var(--primary-text); }
+        body.dark-mode .group-content { background: rgba(15, 23, 42, 0.95); }
+        body.dark-mode .danger-tag { background: rgba(220, 38, 38, 0.2); border-color: rgba(248, 113, 113, 0.3); }
+        body.dark-mode .google-link { background: rgba(30, 41, 59, 0.8); border-color: rgba(248, 113, 113, 0.3); }
+        body.dark-mode .google-link:hover { background: rgba(220, 38, 38, 0.2); }
+        body.dark-mode #errorMessage { background: rgba(15, 23, 42, 0.95) !important; }
+        body.dark-mode .error-detail { background: rgba(30, 41, 59, 0.9); color: #cbd5e1; }
+        body.dark-mode footer { background: rgba(15, 23, 42, 0.72); border-color: rgba(255, 255, 255, 0.1); }
     </style>
 </head>
 <body>
@@ -182,7 +236,7 @@
     <div class="container">
         <header>
             <div class="header-content">
-                <h1><i class="fas fa-syringe" style="color:var(--accent-dark);"></i> TRA CỨU THUỐC TIÊM TRUYỀN</h1>
+                <h1><i class="fas fa-syringe" id="themeToggle" style="color:var(--accent-dark);" title="Bật/Tắt Giao diện Tối"></i> TRA CỨU THUỐC TIÊM TRUYỀN</h1>
                 <p class="header-subtitle">Hỗ trợ cán bộ y tế - BVĐK Tuyên Quang</p>
             </div>
             <div class="pc-warning-badge">
@@ -845,6 +899,42 @@
     window.searchHighRiskGoogle = function(drugName) {
         window.open('https://www.google.com/search?q=' + encodeURIComponent(drugName + ' thuốc nguy cơ cao'), '_blank');
     };
+
+    // ===================== LOGIC GIAO DIỆN SÁNG/TỐI (DARK MODE) =====================
+    document.addEventListener('DOMContentLoaded', function() {
+        const themeToggle = document.getElementById('themeToggle');
+        
+        // Hàm cập nhật trạng thái giao diện
+        function applyTheme(isDark) {
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+        }
+
+        // Lấy thiết lập đã lưu (nếu có) hoặc dựa vào hệ thống
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+        
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark.matches)) {
+            applyTheme(true);
+        }
+
+        // Lắng nghe sự kiện click vào công tắc (biểu tượng bơm tiêm)
+        themeToggle.addEventListener('click', function() {
+            const isDarkMode = document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+        });
+
+        // Lắng nghe thay đổi thiết lập hệ thống theo thời gian thực
+        prefersDark.addEventListener('change', function(e) {
+            // Chỉ đổi theo hệ thống nếu người dùng chưa tự bấm công tắc tay
+            if (!localStorage.getItem('theme')) {
+                applyTheme(e.matches);
+            }
+        });
+    });
 </script>
 </body>
 </html>
